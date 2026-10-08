@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/bxdn/flite/server"
 )
 
@@ -24,6 +26,7 @@ const (
 	SEPARATOR
 	SILO
 	CHARGING_STATION
+	SCANNER
 )
 
 type ActivityType int
@@ -34,6 +37,7 @@ const (
 	IDLE
 	LOADING
 	UNLOADING
+	CHARGING
 )
 
 type Point struct {
@@ -41,24 +45,34 @@ type Point struct {
 }
 
 type Building struct {
-	coords       Point
-	buildingType BuildingType
+	Coords       Point
+	BuildingType BuildingType
 }
 
 type Patch struct {
-	coords  Point
-	ore     Ore
-	density float64
+	Coords  Point
+	Ore     Ore
+	Density float64
 }
 
 type Agent struct {
-	coords Point
+	Coords         Point
+	ActivityType   ActivityType
+	TimeSpentDoing time.Duration
 }
 
 type Game struct {
 	Patches   []Patch
-	Buildings []Building
-	Agents    []Agent
+	Buildings map[BuildingType]*Building
+	Agents    []*Agent
+}
+
+type Locatable interface {
+	GetLocation() Point
+}
+
+type Ticker interface {
+	Tick(game *Game)
 }
 
 func main() {
